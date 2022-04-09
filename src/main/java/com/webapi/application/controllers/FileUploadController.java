@@ -11,8 +11,9 @@ import java.io.FileOutputStream;
 @Controller
 public class FileUploadController
 {
-    @RequestMapping("/")
-    public String index() {
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
+    public String index()
+    {
         return "index.html";
     }
 
