@@ -19,6 +19,7 @@
     </properties>
 
     <dependencies>
+<!--        Spring Boot-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -33,6 +34,42 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+<!--        Libre Office-->
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>ridl</artifactId>
+            <version>6.4.7</version>
+        </dependency>
+        <!-- Thanks for using https://jar-download.com -->
+
+        <dependency>
+            <groupId>org.openoffice</groupId>
+            <artifactId>unoil</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <!-- Thanks for using https://jar-download.com -->
+
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>juh</artifactId>
+            <version>6.4.7</version>
+        </dependency>
+        <!-- Thanks for using https://jar-download.com -->
+
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>jurt</artifactId>
+            <version>6.4.7</version>
+        </dependency>
+        <!-- Thanks for using https://jar-download.com -->
+
+<!--        Костыль для Libre Office-->
+        <dependency>
+            <groupId>com.github.jeremysolarz</groupId>
+            <artifactId>bootstrap-connector</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
