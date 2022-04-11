@@ -15,8 +15,8 @@ import javax.imageio.ImageIO;
 
 public class PDFInsertingImage
 {
-    public static int imageHeight = 70; // высота картинки
-    public static int imageWidth = 170;  // ширина картинки
+    public static int imageHeight = 78; // высота картинки
+    public static int imageWidth = 179;  // ширина картинки
     public static int verticalOffset = 5;   // смещение по пикселям вниз, от текста
 
     public static void drawImageOnEndOfDocument(PDDocument doc, String filePathOutput, String imagePath, int pos_x, int pos_y) throws IOException
@@ -61,9 +61,9 @@ public class PDFInsertingImage
 
     public static void main(String args[]) throws Exception
     {
-        String fileNameInput = "C:\\Users\\ASUS\\Downloads\\СПИСОК ЭКЗ. ВОПРОСОВ ПО КУРСУ ЛИЛТ. Ч.1. 2021.pdf";
-        String fileNameOutput= "C:\\Users\\ASUS\\Downloads\\СПИСОК ЭКЗ. ВОПРОСОВ ПО КУРСУ ЛИЛТ. Ч.1. 2021_out.pdf";
-        String imageFileName = "C:\\Users\\ASUS\\Downloads\\image_java.jpg";
+        String fileNameInput = "C:\\Users\\ASUS\\Downloads\\docs_conv\\титульник_pdf.pdf";
+        String fileNameOutput= "C:\\Users\\ASUS\\Downloads\\docs_conv\\титульник_pdf_out.pdf";
+        String imageFileName = "C:\\Users\\ASUS\\Pictures\\image_java.jpg";
 
         //Loading an existing document
         File file = new File(fileNameInput);
@@ -75,7 +75,7 @@ public class PDFInsertingImage
         int width = image.getWidth();
         int height = image.getHeight();
 
-        boolean existLine = false;  // флаг того, что строка с пикселем не белог оцвета найдена
+        boolean existLine = false;  // флаг того, что строка с пикселем не белого цвета найдена
         int lastLine_YpPos = 0;
 
         for (int y = height - 1; y >= 0; y--)  // идём с конца по высоте
