@@ -15,8 +15,8 @@ import javax.imageio.ImageIO;
 
 public class PDFInsertingImage
 {
-    public static int imageHeight = 25 * 3; // высота картинки
-    public static int imageWidth = 60 * 3;  // ширина картинки
+    public static int imageHeight = 70; // высота картинки
+    public static int imageWidth = 170;  // ширина картинки
     public static int verticalOffset = 5;   // смещение по пикселям вниз, от текста
 
     public static void drawImageOnEndOfDocument(PDDocument doc, String filePathOutput, String imagePath, int pos_x, int pos_y) throws IOException
@@ -61,8 +61,8 @@ public class PDFInsertingImage
 
     public static void main(String args[]) throws Exception
     {
-        String fileNameInput = "C:\\Users\\ASUS\\Downloads\\TL_OEPS_BK_Preddiplomnaya_praktika-объединены (1).pdf";
-        String fileNameOutput= "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike_out.pdf";
+        String fileNameInput = "C:\\Users\\ASUS\\Downloads\\СПИСОК ЭКЗ. ВОПРОСОВ ПО КУРСУ ЛИЛТ. Ч.1. 2021.pdf";
+        String fileNameOutput= "C:\\Users\\ASUS\\Downloads\\СПИСОК ЭКЗ. ВОПРОСОВ ПО КУРСУ ЛИЛТ. Ч.1. 2021_out.pdf";
         String imageFileName = "C:\\Users\\ASUS\\Downloads\\image_java.jpg";
 
         //Loading an existing document
