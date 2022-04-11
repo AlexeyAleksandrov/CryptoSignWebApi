@@ -38,7 +38,7 @@ import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import ooo.connector.BootstrapSocketConnector;
-
+import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Класс <CODE>DocumentConverter</CODE> позволяет конвертировать файлы, которые поддерживает LibreOffice:Writer в форматы *.docx и *.pdf
@@ -48,7 +48,10 @@ public class DocumentConverter
     /**
      * Путь к папке LibreOffice, для запуска
      */
-    private String oooExeFolder = "C:/Program Files/LibreOffice/program/";
+    private String oooExeFolder = null;
+
+    public static final String oooExeFolderWindows = "C:/Program Files/LibreOffice/program/";
+    public static final String oooExeFolderLinux = "/usr/lib/libreoffice/program/";
 
     /**
      * Конструктор конвертера документов
@@ -58,7 +61,15 @@ public class DocumentConverter
      */
     public DocumentConverter(String oooExeFolder) throws BootstrapException, Exception
     {
-        this.oooExeFolder = oooExeFolder;
+        if(SystemUtils.IS_OS_WINDOWS)
+        {
+            this.oooExeFolder = oooExeFolderWindows;
+        }
+        else if(SystemUtils.IS_OS_LINUX)
+        {
+            this.oooExeFolder = oooExeFolderLinux;
+        }
+
         configure();
     }
 
