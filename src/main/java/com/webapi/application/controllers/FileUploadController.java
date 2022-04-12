@@ -1,5 +1,7 @@
 package com.webapi.application.controllers;
 
+import com.webapi.application.handlers.PDFHandler;
+import com.webapi.application.models.FileConvertParamsModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,26 +28,37 @@ public class FileUploadController
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public @ResponseBody
-    String handleFileUpload(@RequestParam("name") String name, @RequestParam("file") MultipartFile file)
+    String handleFileUpload(@RequestParam(value = "params") FileConvertParamsModel fileConvertParamsModel, @RequestParam("file") MultipartFile file)
     {
+        String fileName = file.getOriginalFilename();
+        fileConvertParamsModel.setFileName(fileName);
+
         if (!file.isEmpty())
         {
             try
             {
                 byte[] bytes = file.getBytes();
-                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(name)));
+                assert fileName != null;
+                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fileName)));
                 stream.write(bytes);
                 stream.close();
-                return "Вы удачно загрузили " + name + " в " + name + "-uploaded !";
+
+                if(fileName.endsWith(".pdf"))
+                {
+                    PDFHandler pdfHandler = new PDFHandler();
+                    pdfHandler.processDocument(fileConvertParamsModel);
+                }
+
+                return "Вы удачно загрузили " + fileName + " в " + fileName + "-uploaded !";
             }
             catch (Exception e)
             {
-                return "Вам не удалось загрузить " + name + " => " + e.getMessage();
+                return "Вам не удалось загрузить " + fileName + " => " + e.getMessage();
             }
         }
         else
         {
-            return "Вам не удалось загрузить " + name + " потому что файл пустой.";
+            return "Вам не удалось загрузить " + fileName + " потому что файл пустой.";
         }
     }
 }

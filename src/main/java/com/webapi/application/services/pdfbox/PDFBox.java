@@ -1,7 +1,6 @@
 package com.webapi.application.services.pdfbox;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
 
@@ -11,13 +10,11 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-import javax.imageio.ImageIO;
-
-public class PDFInsertingImage
+public class PDFBox
 {
-    public static int imageHeight = 78; // высота картинки
-    public static int imageWidth = 179;  // ширина картинки
-    public static int verticalOffset = 5;   // смещение по пикселям вниз, от текста
+    public static final int imageHeight = 78; // высота картинки
+    public static final int imageWidth = 179;  // ширина картинки
+    public static final int verticalOffset = 5;   // смещение по пикселям вниз, от текста
 
     public static void drawImageOnEndOfDocument(PDDocument doc, String filePathOutput, String imagePath, int pos_x, int pos_y) throws IOException
     {
