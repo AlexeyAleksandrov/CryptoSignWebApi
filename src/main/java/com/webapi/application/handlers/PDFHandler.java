@@ -5,6 +5,7 @@ import com.webapi.application.services.pdfbox.PDFBox;
 import com.webapi.application.services.signImage.SignImageCreator;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,21 +14,19 @@ import java.io.IOException;
 
 public class PDFHandler
 {
-    public void processDocument(FileConvertParamsModel params) throws PDFHandlerException, IOException
+    private String singImagePath = null;
+    private FileConvertParamsModel params = null;
+
+    public void processDocument(String fileName) throws PDFHandlerException, IOException
     {
         if(!params.getFileName().toLowerCase().endsWith(".pdf"))
         {
             throw new PDFHandlerException("Файл должен быть формата PDF");
         }
 
-        String singImagePath = "sign_image.jpg";
-        SignImageCreator signImageCreator = new SignImageCreator();
-        signImageCreator.createSignImage(singImagePath, params.getSignOwner(), params.getSignCertificate(), params.getSignDateStart(), params.getSignDateEnd(), params.isDrawLogo());
-
         // обработка PDF с помощью PDFBox
-        String fileNameInput = params.getFileName();
-        String fileNameOutput= params.getFileName();
-        String imageFileName = singImagePath;
+        String fileNameInput = fileName;
+        String fileNameOutput= "output/" + params.getFileName();
 
         //Loading an existing document
         File file = new File(fileNameInput);
@@ -73,16 +72,27 @@ public class PDFHandler
         if(y < upDownBorder)  // если Y ниже нижней границы (уходит на нижнюю страницу)
         {
             System.out.println("Произошёл переход на новую страницу!");
-            PDPage page = new PDPage();
+            PDRectangle pageRectangle = doc.getPage(doc.getNumberOfPages()-1).getMediaBox();    // получаем габаритные размеры последней страницы
+            PDPage page = new PDPage(pageRectangle);    // создаём новую страницу такого же размера
             doc.addPage(page);
 
             y = height - PDFBox.imageHeight - PDFBox.verticalOffset - upDownBorder;   // пересчитываем высоту так, чтобы картинка теперь оказалась наверху
         }
 
-        PDFBox.drawImageOnEndOfDocument(doc, fileNameOutput, imageFileName, x, y);    // рисуем картинку по координатам
+        PDFBox.drawImageOnEndOfDocument(doc, fileNameOutput, singImagePath, x, y);    // рисуем картинку по координатам
 
         System.out.println(" " + x + " " + y);
 
         doc.close();
+    }
+
+    public void setSingImagePath(String singImagePath)
+    {
+        this.singImagePath = singImagePath;
+    }
+
+    public void setParams(FileConvertParamsModel params)
+    {
+        this.params = params;
     }
 }

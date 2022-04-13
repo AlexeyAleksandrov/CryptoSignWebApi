@@ -208,6 +208,32 @@ public class DocumentConverter
         }
     }
 
+    public static void main(String args[]) throws BootstrapException
+    {
+        // делаю экспорт файлов
+        try
+        {
+            DocumentConverter documentConverter = new DocumentConverter();  // создаём конвертер документов
+
+            documentConverter.convertTo(
+                    "C:\\Users\\ASUS\\Downloads\\docs_conv\\титульники.rtf",
+                    "C:\\Users\\ASUS\\Downloads\\docs_conv\\titilnik.docx",
+                    DocumentConverter.ConvertType.CONVERT_TO_DOCX);     // конвертируем rtf в docx
+
+            documentConverter.convertTo(
+                    "C:\\Users\\ASUS\\Downloads\\docs_conv\\титульники.rtf",
+                    "C:\\Users\\ASUS\\Downloads\\docs_conv\\титульник.pdf",
+                    DocumentConverter.ConvertType.EXPORT_TO_PDF);       // конвертируем rtf в pdf
+
+            System.exit(0);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace(System.err);
+            System.exit(1);
+        }
+    }
+
 //    /**
 //     * Bootstrap UNO, getting the remote component context, getting a new instance
 //     * of the desktop (used interface XComponentLoader) and calling the

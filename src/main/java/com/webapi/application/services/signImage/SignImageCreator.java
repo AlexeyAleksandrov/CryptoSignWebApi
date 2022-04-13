@@ -1,5 +1,7 @@
 package com.webapi.application.services.signImage;
 
+import com.webapi.application.models.FileConvertParamsModel;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -37,15 +39,15 @@ public class SignImageCreator
     private static final int interval = (height - (topMargin + bottomMargin)) / 5;    // шаг между строками, высота минус отступы, и делим на кол-во строк, которые нужно нарисовать
 
     // параметры герба
-    private static String imageGerbPath = null;     // путь к файлу герба
+    private String imageGerbPath = null;     // путь к файлу герба
     private static final int imageGerbMarginLeft = 20;  // отступ слева для рисования герба
     private static final int imageGerbMarginTop = 10;   // отступ сверху для рисования герба
     private static final int imageGerbWidth = 52;   // ширина герба
     private static final int imageGerbHeight = 65;  // высота герба
 
-    public static void setImageGerbPath(String imageGerbPath)
+    public void setImageGerbPath(String imageGerbPath)
     {
-        SignImageCreator.imageGerbPath = imageGerbPath;
+        this.imageGerbPath = imageGerbPath;
     }
 
     /**
@@ -60,6 +62,30 @@ public class SignImageCreator
      */
     public void createSignImage(String filePath, String owner, String certificate, String validFrom, String validTo, boolean drawGerb) throws IOException
     {
+        FileConvertParamsModel convertParams = new FileConvertParamsModel();
+        convertParams.setSignOwner(owner);
+        convertParams.setSignCertificate(certificate);
+        convertParams.setSignDateStart(validFrom);
+        convertParams.setSignDateEnd(validTo);
+        convertParams.setDrawLogo(drawGerb);
+
+        createSignImage(filePath, convertParams);   // вызываем ту-же функцию, но с моделью параметров
+    }
+
+    /**
+     * Функция создания картинки с данными о подписи
+     * @param filePath место сохранения итоговой картинки
+     * @param convertParams параметры изображения - сертификат, владелец и т.д.
+     * @throws IOException исключения, при ошибках чтения и записи файлов картинки или герба
+     */
+    public void createSignImage(String filePath, FileConvertParamsModel convertParams) throws IOException
+    {
+        String owner = convertParams.getSignOwner();
+        String certificate = convertParams.getSignCertificate();
+        String validFrom = convertParams.getSignDateStart();
+        String validTo = convertParams.getSignDateEnd();
+        boolean drawGerb = convertParams.isDrawLogo();
+
         File file = new File(filePath);
 
         BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
