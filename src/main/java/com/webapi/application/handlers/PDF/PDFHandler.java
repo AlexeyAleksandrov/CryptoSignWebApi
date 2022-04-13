@@ -1,8 +1,8 @@
-package com.webapi.application.handlers;
+package com.webapi.application.handlers.PDF;
 
+import com.webapi.application.handlers.IUploadedFileHandler;
 import com.webapi.application.models.FileConvertParamsModel;
 import com.webapi.application.services.pdfbox.PDFBox;
-import com.webapi.application.services.signImage.SignImageCreator;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -11,12 +11,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-
-public class PDFHandler
+public class PDFHandler extends IUploadedFileHandler
 {
-    private String singImagePath = null;
-    private FileConvertParamsModel params = null;
-
+    @Override
     public void processDocument(String fileName) throws PDFHandlerException, IOException
     {
         if(!params.getFileName().toLowerCase().endsWith(".pdf"))
@@ -84,15 +81,5 @@ public class PDFHandler
         System.out.println(" " + x + " " + y);
 
         doc.close();
-    }
-
-    public void setSingImagePath(String singImagePath)
-    {
-        this.singImagePath = singImagePath;
-    }
-
-    public void setParams(FileConvertParamsModel params)
-    {
-        this.params = params;
     }
 }

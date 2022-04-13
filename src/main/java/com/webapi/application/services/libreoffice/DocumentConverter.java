@@ -61,15 +61,7 @@ public class DocumentConverter
      */
     public DocumentConverter(String oooExeFolder) throws BootstrapException, Exception
     {
-        if(SystemUtils.IS_OS_WINDOWS)
-        {
-            this.oooExeFolder = oooExeFolderWindows;
-        }
-        else if(SystemUtils.IS_OS_LINUX)
-        {
-            this.oooExeFolder = oooExeFolderLinux;
-        }
-
+        this.oooExeFolder = oooExeFolder;
         configure();
     }
 
@@ -80,6 +72,14 @@ public class DocumentConverter
      */
     public DocumentConverter() throws BootstrapException, Exception
     {
+        if(SystemUtils.IS_OS_WINDOWS)
+        {
+            this.oooExeFolder = oooExeFolderWindows;
+        }
+        else if(SystemUtils.IS_OS_LINUX)
+        {
+            this.oooExeFolder = oooExeFolderLinux;
+        }
         configure();
     }
 

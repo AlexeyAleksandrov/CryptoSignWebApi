@@ -1,4 +1,4 @@
-package com.webapi.application.handlers;
+package com.webapi.application.handlers.PDF;
 
 public class PDFHandlerException extends Exception
 {

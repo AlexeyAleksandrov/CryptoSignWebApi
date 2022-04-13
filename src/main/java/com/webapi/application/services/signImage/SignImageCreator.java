@@ -31,7 +31,7 @@ public class SignImageCreator
 
     // параметры текста
     private static final int indent = 20;    // отступ по X от левого края рамки
-    private static final int fontSizeBig = 16;   // размер шрифта для заголовков
+    private static final int fontSizeBig = 17;   // размер шрифта для заголовков
     private static final int fontSizeSmall = 13; // размер шрифта для текста
     private static final String fontName = "Segoe UI";   // шрифт, которым будет написан текст
 
@@ -140,7 +140,7 @@ public class SignImageCreator
             text_x = (int) x_center; // то заменяем координату по X на центр
         }
 
-        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);  // устанавливаем флаги для сглаживания
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);  // устанавливаем флаги для сглаживания
         graphics.drawString(text, text_x, text_y);  // рисуем надпись
     }
 }

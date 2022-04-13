@@ -9,6 +9,7 @@ public class FileConvertParamsModel
     private String signDateEnd;     // поле окончания действия сертификата
     private boolean drawLogo;   // флаг отрисовки герба
     private boolean checkTransitionToNewPage;   // флаг проверки перехода на новую страницу
+    private int insertType; // тип вставки (0 - классический, 1 - по координатам, 2 - по тэгу)
 
     public boolean isDrawLogo()
     {
@@ -78,6 +79,16 @@ public class FileConvertParamsModel
     public void setCheckTransitionToNewPage(boolean checkTransitionToNewPage)
     {
         this.checkTransitionToNewPage = checkTransitionToNewPage;
+    }
+
+    public int getInsertType()
+    {
+        return insertType;
+    }
+
+    public void setInsertType(int insertType)
+    {
+        this.insertType = insertType;
     }
 
     @Override

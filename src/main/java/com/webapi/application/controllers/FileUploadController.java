@@ -1,6 +1,7 @@
 package com.webapi.application.controllers;
 
-import com.webapi.application.handlers.PDFHandler;
+import com.webapi.application.handlers.PDF.PDFHandler;
+import com.webapi.application.handlers.Word.WordHandler;
 import com.webapi.application.models.FileConvertParamsModel;
 import com.webapi.application.services.signImage.SignImageCreator;
 import org.springframework.stereotype.Controller;
@@ -37,7 +38,8 @@ public class FileUploadController
                             @RequestParam(value = "checkTransitionToNewPage", required = false, defaultValue = "false") boolean checkTransitionToNewPage,
                             @RequestParam("file") MultipartFile file)
     {
-        String fileName = "uploadedfiles/" + file.getOriginalFilename();   // получаем оригинальное название файла, который был загружен
+        String currentDir = System.getProperty("user.dir");
+        String fileName =  currentDir + "/uploadedfiles/" + file.getOriginalFilename();   // получаем оригинальное название файла, который был загружен
         FileConvertParamsModel convertParams = new FileConvertParamsModel();    // модель получаемых данных, для удобства
 
         // заносим полученные параметры в модель данных
@@ -48,6 +50,7 @@ public class FileUploadController
         convertParams.setSignDateEnd(signDateTo);
         convertParams.setDrawLogo(drawLogo);
         convertParams.setCheckTransitionToNewPage(checkTransitionToNewPage);
+        convertParams.setInsertType(0);
 
         // начинаем обработку файла
         if (!file.isEmpty())
@@ -67,6 +70,14 @@ public class FileUploadController
                 SignImageCreator signImageCreator = new SignImageCreator(); // создаём генератор изображения подписи
                 signImageCreator.setImageGerbPath(signImageLogoPath);       // указываем путь к гербу
                 signImageCreator.createSignImage(singImagePath, convertParams); // создаём изображение подписи
+
+                if(fileName.endsWith(".docx") || fileName.endsWith(".doc") || fileName.endsWith(".rtf"))
+                {
+                    WordHandler wordHandler = new WordHandler();
+                    wordHandler.setSingImagePath(singImagePath);
+                    wordHandler.setParams(convertParams);
+                    wordHandler.processDocument(fileName);
+                }
 
                 // обрабатываем полученный файл
                 if(fileName.endsWith(".pdf"))
