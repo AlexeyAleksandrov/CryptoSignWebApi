@@ -2,7 +2,7 @@ HELP.md
 target/
 uploadedfiles/
 output/
-temp/
+temp/sign_image.jpg
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

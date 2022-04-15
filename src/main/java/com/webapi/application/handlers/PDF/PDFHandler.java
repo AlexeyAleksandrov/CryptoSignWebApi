@@ -35,11 +35,16 @@ public class PDFHandler extends UploadedFileHandler
         int width = image.getWidth();
         int height = image.getHeight();
 
-        boolean existLine = false;  // флаг того, что строка с пикселем не белого цвета найдена
+        double widthCoefficient = (double)width/(double)PDFBox.pageReferenceWidth;  // коэффициент маштабирования для ширины
+        double heightCoefficient = (double)height/(double)PDFBox.pageReferenceHeight;   //коэффициент маштабирования для высоты
+
+        System.out.println("w = " + width + " h = " + height);
+
         int lastLine_YpPos = 0;
 
         for (int y = height - 1; y >= 0; y--)  // идём с конца по высоте
         {
+            boolean existLine = false;  // флаг того, что строка с пикселем не белого цвета найдена
             for (int x = 0; x < width; x++)
             {
                 int argb = image.getRGB(x, y);  // получение цветов, взято из документации
@@ -60,9 +65,12 @@ public class PDFHandler extends UploadedFileHandler
             }
         }
 
+        int imageWidth = (int)(((double)PDFBox.imageWidth) * widthCoefficient); // ширина изображения для конкретного PDF файла
+        int imageHeight = (int)(((double)PDFBox.imageHeight) * heightCoefficient); // высота изображения для конкретного PDF файла
+
         // считаем координаты для вставки изображения в центр конца документа
-        int x = width/2 - PDFBox.imageWidth/2;    // центр по ширине
-        int y = height - lastLine_YpPos - PDFBox.imageHeight - PDFBox.verticalOffset; // делаем вычитание координаты Y из высоты, т.к. при рисовании система координат обратная
+        int x = width/2 - imageWidth/2;    // центр по ширине
+        int y = height - lastLine_YpPos - imageHeight - PDFBox.verticalOffset; // делаем вычитание координаты Y из высоты, т.к. при рисовании система координат обратная
 
         final int upDownBorder = (int)((double)height * (double)0.0675);  // вычисляем верхнюю/нижнюю границу (поля отступа) (6.75% = 2 см), нижний отступ
 
@@ -73,10 +81,10 @@ public class PDFHandler extends UploadedFileHandler
             PDPage page = new PDPage(pageRectangle);    // создаём новую страницу такого же размера
             doc.addPage(page);
 
-            y = height - PDFBox.imageHeight - PDFBox.verticalOffset - upDownBorder;   // пересчитываем высоту так, чтобы картинка теперь оказалась наверху
+            y = height - imageHeight - PDFBox.verticalOffset - upDownBorder;   // пересчитываем высоту так, чтобы картинка теперь оказалась наверху
         }
 
-        PDFBox.drawImageOnEndOfDocument(doc, fileNameOutput, singImagePath, x, y);    // рисуем картинку по координатам
+        PDFBox.drawImageOnEndOfDocument(doc, fileNameOutput, singImagePath, x, y, imageWidth, imageHeight);    // рисуем картинку по координатам
 
         System.out.println(" " + x + " " + y);
 

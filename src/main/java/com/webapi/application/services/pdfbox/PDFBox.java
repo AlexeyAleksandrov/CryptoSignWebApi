@@ -14,9 +14,11 @@ public class PDFBox
 {
     public static final int imageHeight = 78; // высота картинки
     public static final int imageWidth = 179;  // ширина картинки
+    public static final int pageReferenceHeight = 841;  // эталонная высота страницы А4
+    public static final int pageReferenceWidth = 595;   // эталонная ширина страницы А4
     public static final int verticalOffset = 5;   // смещение по пикселям вниз, от текста
 
-    public static void drawImageOnEndOfDocument(PDDocument doc, String filePathOutput, String imagePath, int pos_x, int pos_y) throws IOException
+    public static void drawImageOnEndOfDocument(PDDocument doc, String filePathOutput, String imagePath, int pos_x, int pos_y, int imageWidth, int imageHeight) throws IOException
     {
 //        //Loading an existing document
 //        File file = new File(filePathInput);
@@ -72,15 +74,20 @@ public class PDFBox
         int width = image.getWidth();
         int height = image.getHeight();
 
-        boolean existLine = false;  // флаг того, что строка с пикселем не белого цвета найдена
+        double widthCoefficient = (double)width / (double)PDFBox.imageWidth;
+        double heightCoefficient = (double)height / (double)PDFBox.imageHeight;
+
+        int imageWidth = (int)((double)PDFBox.imageWidth * widthCoefficient);
+        int imageHeight = (int)((double)PDFBox.imageHeight * heightCoefficient);
+
         int lastLine_YpPos = 0;
 
         for (int y = height - 1; y >= 0; y--)  // идём с конца по высоте
         {
+            boolean existLine = false;  // флаг того, что строка с пикселем не белого цвета найдена
             for (int x = 0; x < width; x++)
             {
                 int argb = image.getRGB(x, y);  // получение цветов, взято из документации
-//                int alpha = (argb >> 24) & 0xff;
                 int red = (argb >> 16) & 0xff;
                 int green = (argb >> 8) & 0xff;
                 int blue = (argb) & 0xff;
@@ -113,7 +120,7 @@ public class PDFBox
             y = height - imageHeight - verticalOffset - upDownBorder;   // пересчитываем высоту так, чтобы картинка теперь оказалась наверху
         }
 
-        drawImageOnEndOfDocument(doc, fileNameOutput, imageFileName, x, y);    // рисуем картинку по координатам
+        drawImageOnEndOfDocument(doc, fileNameOutput, imageFileName, x, y, imageWidth, imageHeight);    // рисуем картинку по координатам
 
         System.out.println(" " + x + " " + y);
 
