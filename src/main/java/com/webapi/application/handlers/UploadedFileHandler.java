@@ -8,12 +8,12 @@ import com.webapi.application.models.FileConvertParamsModel;
 
 import java.io.IOException;
 
-public abstract class IUploadedFileHandler
+public abstract class UploadedFileHandler
 {
     protected String singImagePath = null;
     protected FileConvertParamsModel params = null;
 
-    public void processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception {};
+    public String processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception { return null; };
 
     public String getSingImagePath()
     {
@@ -34,4 +34,5 @@ public abstract class IUploadedFileHandler
     {
         this.params = params;
     }
+
 }

@@ -1,6 +1,7 @@
 package com.webapi.application.controllers;
 
 import com.webapi.application.handlers.PDF.PDFHandler;
+import com.webapi.application.handlers.UploadedFileHandler;
 import com.webapi.application.handlers.Word.WordHandler;
 import com.webapi.application.models.FileConvertParamsModel;
 import com.webapi.application.services.signImage.SignImageCreator;
@@ -33,8 +34,9 @@ public class FileUploadController
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public @ResponseBody
-    String handleFileUpload(@RequestParam("signOwner") String signOwner, @RequestParam("signCertificate") String signCertificate, @RequestParam("signDateFrom") String signDateFrom, @RequestParam("signDateTo") String signDateTo, @RequestParam(value = "drawLogo", required = false, defaultValue = "true") boolean drawLogo, @RequestParam(value = "checkTransitionToNewPage", required = false, defaultValue = "false") boolean checkTransitionToNewPage, @RequestParam("file") MultipartFile file)
+    String handleFileUpload(@RequestParam("signOwner") String signOwner, @RequestParam("signCertificate") String signCertificate, @RequestParam("signDateFrom") String signDateFrom, @RequestParam("signDateTo") String signDateTo, @RequestParam(value = "drawLogo", required = false, defaultValue = "true") boolean drawLogo, @RequestParam(value = "checkNewPage", required = false, defaultValue = "false") boolean checkTransitionToNewPage, @RequestParam("insertType") String insertType, @RequestParam("file") MultipartFile file)
     {
+
         String currentDir = System.getProperty("user.dir");
         String fileName = currentDir + "/uploadedfiles/" + file.getOriginalFilename();   // получаем оригинальное название файла, который был загружен
         FileConvertParamsModel convertParams = new FileConvertParamsModel();    // модель получаемых данных, для удобства
@@ -47,7 +49,15 @@ public class FileUploadController
         convertParams.setSignDateEnd(signDateTo);
         convertParams.setDrawLogo(drawLogo);
         convertParams.setCheckTransitionToNewPage(checkTransitionToNewPage);
-        convertParams.setInsertType(0);
+        switch (insertType)
+        {
+            case "В конец документа" -> convertParams.setInsertType(0);
+            case "По координатам" -> convertParams.setInsertType(1);
+            case "По тэгу" -> convertParams.setInsertType(2);
+            default -> convertParams.setInsertType(-1);
+        }
+
+        System.out.println("type = " + convertParams.getInsertType());
 
         // начинаем обработку файла
         if (!file.isEmpty())
@@ -68,24 +78,28 @@ public class FileUploadController
                 signImageCreator.setImageGerbPath(signImageLogoPath);       // указываем путь к гербу
                 signImageCreator.createSignImage(singImagePath, convertParams); // создаём изображение подписи
 
+                UploadedFileHandler documentHandler = null; // обработчик документов
+                String outputFileName = null;
+                // определяем тип полученного файла
                 if (fileName.endsWith(".docx") || fileName.endsWith(".doc") || fileName.endsWith(".rtf"))
                 {
-                    WordHandler wordHandler = new WordHandler();
-                    wordHandler.setSingImagePath(singImagePath);
-                    wordHandler.setParams(convertParams);
-                    wordHandler.processDocument(fileName);
+                    documentHandler = new WordHandler();
+                }
+                else if (fileName.endsWith(".pdf"))
+                {
+                    documentHandler = new PDFHandler();   // создаём обработчик
+                }
+                else
+                {
+                    return "Данный тип файлов не поддерживается!";
                 }
 
                 // обрабатываем полученный файл
-                if (fileName.endsWith(".pdf"))
-                {
-                    PDFHandler pdfHandler = new PDFHandler();   // создаём обработчик
-                    pdfHandler.setSingImagePath(singImagePath); // указываем путь к картинке, которую нужно будет вставить
-                    pdfHandler.setParams(convertParams);    // указываем параметры обработки
-                    pdfHandler.processDocument(fileName);   // запускаем обработку
-                }
+                documentHandler.setSingImagePath(singImagePath); // указываем путь к картинке, которую нужно будет вставить
+                documentHandler.setParams(convertParams);    // указываем параметры обработки
+                outputFileName = documentHandler.processDocument(fileName);   // запускаем обработку
 
-                return "Файл " + fileName + " успешно загружен!";
+                return "OK! http://localhost:8080/download?file=" + outputFileName;
             }
             catch (Exception e)
             {
@@ -95,16 +109,9 @@ public class FileUploadController
         }
         else
         {
-            return "Error! Вам не удалось загрузить " + fileName + " потому что файл пустой.";
+            return "Error! Не удалось загрузить файл, потому что он пустой.";
         }
     }
-
-    //    @RequestMapping(value="/download", method=RequestMethod.GET)
-    //    @ResponseBody
-    //    public FileSystemResource downloadFile(@RequestParam(value="file") String fileName)
-    //    {
-    //        return new FileSystemResource(new File("output/" + fileName));
-    //    }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     @ResponseBody

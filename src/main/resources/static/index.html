@@ -11,7 +11,13 @@
     <label>Сертификат: <input type="text" name="signCertificate"></label><br>
     <label>Действителен с <input type="date" name="signDateFrom"> до <input type="date" name="signDateTo"></label><br>
     <label><input type="checkbox" name="drawLogo" checked="checked"> Рисовать герб</label><br>
-    <label><input type="checkbox" name="checkTransitionToNewPage"> Игнорировать переход на новую страницу</label><br>
+    <label><input type="checkbox" name="checkNewPage"> Игнорировать переход на новую страницу</label><br>
+    <p><select size="1" name="insertType">
+        <option disabled>Тип вставки</option>
+        <option value="В конец документа">В конец документа</option>
+        <option value="По координатам">По координатам</option>
+        <option value="По тэгу">По тэгу</option>
+    </select></p>
     <br>
     <label><input type="submit" value="Upload"> Press here to upload the file!</label>
 </form>

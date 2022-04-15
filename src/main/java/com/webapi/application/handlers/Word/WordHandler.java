@@ -2,17 +2,17 @@ package com.webapi.application.handlers.Word;
 
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.uno.Exception;
-import com.webapi.application.handlers.IUploadedFileHandler;
+import com.webapi.application.handlers.UploadedFileHandler;
 import com.webapi.application.handlers.PDF.PDFHandlerException;
 import com.webapi.application.services.libreoffice.DocumentConverter;
 import com.webapi.application.services.msword.OpenXML;
 
 import java.io.IOException;
 
-public class WordHandler extends IUploadedFileHandler
+public class WordHandler extends UploadedFileHandler
 {
     @Override
-    public void processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception
+    public String processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception
     {
         if(!fileName.endsWith(".docx") && !fileName.endsWith(".doc") && !fileName.endsWith(".rtf"))
         {
@@ -46,8 +46,14 @@ public class WordHandler extends IUploadedFileHandler
 
         // экспортируем в PDF
         DocumentConverter libreOffice = new DocumentConverter();
-        String outputFile = fileName.replace(".docx", ".pdf");
-        outputFile = outputFile.replace("uploadedfiles", "output");
-        libreOffice.convertTo(fileName, outputFile, DocumentConverter.ConvertType.EXPORT_TO_PDF);
+        String outputFileName = fileName.replace(".docx", ".pdf");
+        outputFileName = outputFileName.replace("uploadedfiles", "output");
+        libreOffice.convertTo(fileName, outputFileName, DocumentConverter.ConvertType.EXPORT_TO_PDF);
+
+        outputFileName = params.getFileName()
+                .replace(".docx", ".pdf")
+                .replace(".doc", ".pdf")
+                .replace(".rtf", ".pdf");
+        return outputFileName;
     }
 }

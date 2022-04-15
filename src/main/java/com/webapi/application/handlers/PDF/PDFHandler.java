@@ -1,7 +1,6 @@
 package com.webapi.application.handlers.PDF;
 
-import com.webapi.application.handlers.IUploadedFileHandler;
-import com.webapi.application.models.FileConvertParamsModel;
+import com.webapi.application.handlers.UploadedFileHandler;
 import com.webapi.application.services.pdfbox.PDFBox;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -11,10 +10,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class PDFHandler extends IUploadedFileHandler
+public class PDFHandler extends UploadedFileHandler
 {
     @Override
-    public void processDocument(String fileName) throws PDFHandlerException, IOException
+    public String processDocument(String fileName) throws PDFHandlerException, IOException
     {
         if(!params.getFileName().toLowerCase().endsWith(".pdf"))
         {
@@ -22,11 +21,12 @@ public class PDFHandler extends IUploadedFileHandler
         }
 
         // обработка PDF с помощью PDFBox
-        String fileNameInput = fileName;
+//        String fileNameInput = fileName;
         String fileNameOutput= "output/" + params.getFileName();
+//        outputFileName = "output/" + params.getFileName();
 
         //Loading an existing document
-        File file = new File(fileNameInput);
+        File file = new File(fileName);
         PDDocument doc = PDDocument.load(file);
 
         BufferedImage image = PDFBox.getImageLastPagePdfDocument(doc);
@@ -81,5 +81,7 @@ public class PDFHandler extends IUploadedFileHandler
         System.out.println(" " + x + " " + y);
 
         doc.close();
+
+        return params.getFileName();
     }
 }
