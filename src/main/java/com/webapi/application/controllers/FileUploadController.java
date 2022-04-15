@@ -64,6 +64,30 @@ public class FileUploadController
         {
             try
             {
+                // проверяем наличие папок для сохранения и вывода
+                boolean uploadDirCreated = true;
+                boolean outputDirCreated = true;
+
+                // папка сохранения
+                File uploadDir = new File("uploadedfiles/");
+                if(!uploadDir.exists())
+                {
+                    uploadDirCreated = uploadDir.mkdir();
+                }
+
+                // папка вывода
+                File outputDir = new File("output/");
+                if(!outputDir.exists())
+                {
+                    outputDirCreated = outputDir.mkdir();
+                }
+
+                // проверка наличия
+                if(!uploadDirCreated || !outputDirCreated)
+                {
+                    return "Не удалось загрузить файл, т.к. файловая система не позволяет выполнить сохранение!";
+                }
+
                 // сохраняем файл на устройстве
                 byte[] bytes = file.getBytes();
                 BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fileName)));
@@ -71,7 +95,7 @@ public class FileUploadController
                 stream.close();
 
                 String singImagePath = "temp/sign_image.jpg";   // путь сохранения готового изображения подписи
-                String signImageLogoPath = "src/main/resources/logo/mirea_gerb_52_65.png";  // путь к гербу для изображения
+                String signImageLogoPath = "logo/mirea_gerb_52_65.png";  // путь к гербу для изображения
 
                 // создаём изображение подписи
                 SignImageCreator signImageCreator = new SignImageCreator(); // создаём генератор изображения подписи

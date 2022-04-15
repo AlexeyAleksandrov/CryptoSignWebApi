@@ -35,8 +35,8 @@ public class PDFHandler extends UploadedFileHandler
         int width = image.getWidth();
         int height = image.getHeight();
 
-        double widthCoefficient = (double)width/(double)PDFBox.pageReferenceWidth;  // коэффициент маштабирования для ширины
-        double heightCoefficient = (double)height/(double)PDFBox.pageReferenceHeight;   //коэффициент маштабирования для высоты
+        double widthCoefficient = (double)width/(double)PDFBox.pageReferenceWidth;  // коэффициент маштабирования для ширины страницы
+        double heightCoefficient = (double)height/(double)PDFBox.pageReferenceHeight;   //коэффициент маштабирования для высоты страницы
 
         System.out.println("w = " + width + " h = " + height);
 
@@ -67,6 +67,7 @@ public class PDFHandler extends UploadedFileHandler
 
         int imageWidth = (int)(((double)PDFBox.imageWidth) * widthCoefficient); // ширина изображения для конкретного PDF файла
         int imageHeight = (int)(((double)PDFBox.imageHeight) * heightCoefficient); // высота изображения для конкретного PDF файла
+        imageHeight = (int)(((double)PDFBox.imageHeight) * widthCoefficient);   // для вертикального соотношения
 
         // считаем координаты для вставки изображения в центр конца документа
         int x = width/2 - imageWidth/2;    // центр по ширине
