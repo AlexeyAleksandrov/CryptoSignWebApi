@@ -5,9 +5,7 @@ import com.webapi.application.handlers.PDF.PDFHandler;
 import com.webapi.application.handlers.UploadedFileHandler;
 import com.webapi.application.handlers.Word.WordHandler;
 import com.webapi.application.models.FileConvertParamsModel;
-import com.webapi.application.services.libreoffice.DocumentConverter;
 import com.webapi.application.services.signImage.SignImageCreator;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -54,12 +52,29 @@ public class FileUploadController
         convertParams.setSignDateEnd(signDateTo);
         convertParams.setDrawLogo(drawLogo);
         convertParams.setCheckTransitionToNewPage(checkTransitionToNewPage);
+
         switch (insertType)
         {
-            case "В конец документа" -> convertParams.setInsertType(0);
-            case "По координатам" -> convertParams.setInsertType(1);
-            case "По тэгу" -> convertParams.setInsertType(2);
-            default -> convertParams.setInsertType(-1);
+            case "В конец документа":
+            {
+                convertParams.setInsertType(0);
+                break;
+            }
+            case "По координатам":
+            {
+                convertParams.setInsertType(1);
+                break;
+            }
+            case "По тэгу":
+            {
+                convertParams.setInsertType(2);
+                break;
+            }
+            default:
+            {
+                convertParams.setInsertType(-1);
+                break;
+            }
         }
 
         // проверка корректности входных данных
@@ -78,23 +93,27 @@ public class FileUploadController
                 // проверяем наличие папок для сохранения и вывода
                 boolean uploadDirCreated = true;
                 boolean outputDirCreated = true;
+                boolean tempDirCreated = true;
 
-                // папка сохранения
-                File uploadDir = new File("uploadedfiles/");
+                File outputDir = new File("output/");   // папка вывода
+                File uploadDir = new File("uploadedfiles/");    // папка сохранения
+                File tempDir = new File("temp/");   // папка для временных данных
+
                 if(!uploadDir.exists())
                 {
                     uploadDirCreated = uploadDir.mkdir();
                 }
-
-                // папка вывода
-                File outputDir = new File("output/");
                 if(!outputDir.exists())
                 {
                     outputDirCreated = outputDir.mkdir();
                 }
+                if(!tempDir.exists())
+                {
+                    tempDirCreated = tempDir.mkdir();
+                }
 
                 // проверка наличия
-                if(!uploadDirCreated || !outputDirCreated)
+                if(!uploadDirCreated || !outputDirCreated || !tempDirCreated)
                 {
                     return "Не удалось загрузить файл, т.к. файловая система не позволяет выполнить сохранение!";
                 }

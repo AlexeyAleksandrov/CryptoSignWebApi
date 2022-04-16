@@ -17,30 +17,34 @@ public class CMDApplication
 {
     public static void main(String[] args)
     {
-        args = new String[8];
-        args[0] = "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike.docx";
-        args[1] = "Vladelets";
-        args[2] = "46r7346t3486tr834t83";
-        args[3] = "08.04.2022";
-        args[4] = "08.04.2023";
-        args[5] = "1";
-        args[6] = "0";
-        args[7] = "В конец документа";
+//        args = new String[9];
+//        args[0] = "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike.docx";
+//        args[1] = "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike_cmd.pdf";
+//        args[2] = "Vladelets";
+//        args[3] = "46r7346t3486tr834t83";
+//        args[4] = "08.04.2022";
+//        args[5] = "08.04.2023";
+//        args[6] = "true";
+//        args[7] = "false";
+//        args[8] = "В конец документа";
 
-        if(args.length < 8)
+        // java -jar application.jar C:\Users\ASUS\Downloads\Otchyot_po_praktike.docx C:\Users\ASUS\Downloads\Otchyot_po_praktike_cmd_1.pdf Alexxey 46376r736r7346r734 08.04.2022 08.04.2023 true false "В конец документа"
+
+        if(args.length < 9)
         {
             System.out.println("Недостаточно параметров!");
             System.exit(1);
         }
 
         File fileInput = new File(args[0]);
-        String signOwner = args[1];
-        String signCertificate = args[2];
-        String signDateFrom = args[3];
-        String signDateTo = args[4];
-        boolean drawLogo = Boolean.parseBoolean(args[5]);
-        boolean checkTransitionToNewPage = Boolean.parseBoolean(args[6]);
-        String insertType = args[7];
+        File fileOutput = new File(args[1]);
+        String signOwner = args[2];
+        String signCertificate = args[3];
+        String signDateFrom = args[4];
+        String signDateTo = args[5];
+        boolean drawLogo = Boolean.parseBoolean(args[6]);
+        boolean checkTransitionToNewPage = Boolean.parseBoolean(args[7]);
+        String insertType = args[8];
 
         String fileInputOriginalName = fileInput.getName();
         String currentDir = System.getProperty("user.dir");
@@ -55,12 +59,29 @@ public class CMDApplication
         convertParams.setSignDateEnd(signDateTo);
         convertParams.setDrawLogo(drawLogo);
         convertParams.setCheckTransitionToNewPage(checkTransitionToNewPage);
+
         switch (insertType)
         {
-            case "В конец документа" -> convertParams.setInsertType(0);
-            case "По координатам" -> convertParams.setInsertType(1);
-            case "По тэгу" -> convertParams.setInsertType(2);
-            default -> convertParams.setInsertType(-1);
+            case "В конец документа":
+            {
+                convertParams.setInsertType(0);
+                break;
+            }
+            case "По координатам":
+            {
+                convertParams.setInsertType(1);
+                break;
+            }
+            case "По тэгу":
+            {
+                convertParams.setInsertType(2);
+                break;
+            }
+            default:
+            {
+                convertParams.setInsertType(-1);
+                break;
+            }
         }
 
         // проверка корректности входных данных
@@ -73,37 +94,46 @@ public class CMDApplication
         }
 
         // начинаем обработку файла
-        if (!fileInput.exists())
+        if (fileInput.exists())
         {
             try
             {
                 // проверяем наличие папок для сохранения и вывода
                 boolean uploadDirCreated = true;
                 boolean outputDirCreated = true;
+                boolean tempDirCreated = true;
 
-                // папка сохранения
-                File uploadDir = new File("uploadedfiles/");
+                File outputDir = new File("output/");   // папка вывода
+                File uploadDir = new File("uploadedfiles/");    // папка сохранения
+                File tempDir = new File("temp/");   // папка для временных данных
+
                 if(!uploadDir.exists())
                 {
                     uploadDirCreated = uploadDir.mkdir();
                 }
-
-                // папка вывода
-                File outputDir = new File("output/");
                 if(!outputDir.exists())
                 {
                     outputDirCreated = outputDir.mkdir();
                 }
+                if(!tempDir.exists())
+                {
+                    tempDirCreated = tempDir.mkdir();
+                }
 
                 // проверка наличия
-                if(!uploadDirCreated || !outputDirCreated)
+                if(!uploadDirCreated || !outputDirCreated || !tempDirCreated)
                 {
                     System.out.println("Не удалось загрузить файл, т.к. файловая система не позволяет выполнить сохранение!");
                     System.exit(1);
                 }
 
                 // сохраняем файл на устройстве
-                byte[] bytes = new FileInputStream(fileInput).readAllBytes();
+                FileInputStream fileInputStream = new FileInputStream(fileInput);
+                int fileInputSize = (int) fileInput.length();   // размер файла
+                byte[] bytes = new byte[fileInputSize];     // создаем массив байт
+                fileInputStream.read(bytes);    // считываем файл
+                fileInputStream.close();
+
                 BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fileName)));
                 stream.write(bytes);
                 stream.close();
@@ -139,7 +169,37 @@ public class CMDApplication
                 documentHandler.setParams(convertParams);    // указываем параметры обработки
                 outputFileName = documentHandler.processDocument(fileName);   // запускаем обработку
 
-                System.out.println("OK! http://localhost:8080/download?file=" + outputFileName);
+                // считываем конечный файл
+                File outputFile = new File("output/" + outputFileName);
+                int outputFileSize = (int) outputFile.length();
+                byte[] outputFileData = new byte[outputFileSize];
+                FileInputStream outFileInputStream = new FileInputStream(outputFile);
+                outFileInputStream.read(outputFileData);
+                outFileInputStream.close();
+
+//                byte[] outputFileData = new FileInputStream(outputFile).readAllBytes(); // считываем весь файл
+                // записываем файл туда, куда указано
+                FileOutputStream fileOutputStream = new FileOutputStream(fileOutput);
+                fileOutputStream.write(outputFileData); // записываем все данные обратно
+                fileOutputStream.close();
+
+                // очищаем папки
+                for(File file : uploadDir.listFiles())  // очистка папки входных файлов
+                {
+                    if(file.isFile())
+                    {
+                        file.delete();
+                    }
+                }
+                for(File file : outputDir.listFiles())  // очистка папки выходных файлов
+                {
+                    if(file.isFile())
+                    {
+                        file.delete();
+                    }
+                }
+
+                System.out.println("OK! " + outputFileName);
                 System.exit(0);
             }
             catch (Exception e)
