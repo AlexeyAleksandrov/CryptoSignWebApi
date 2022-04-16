@@ -1,6 +1,10 @@
 package com.webapi.application.handlers.PDF;
 
+import com.sun.star.comp.helper.BootstrapException;
+import com.sun.star.uno.Exception;
+import com.webapi.application.handlers.Excel.ExcelHandlerException;
 import com.webapi.application.handlers.UploadedFileHandler;
+import com.webapi.application.handlers.Word.WordHandlerException;
 import com.webapi.application.services.pdfbox.PDFBox;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -13,17 +17,12 @@ import java.io.IOException;
 public class PDFHandler extends UploadedFileHandler
 {
     @Override
-    public String processDocument(String fileName) throws PDFHandlerException, IOException
+    public void processDocument(String fileName, String outputFileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception, ExcelHandlerException
     {
-        if(!params.getFileName().toLowerCase().endsWith(".pdf"))
+        if(!fileName.toLowerCase().endsWith(".pdf"))
         {
             throw new PDFHandlerException("Файл должен быть формата PDF");
         }
-
-        // обработка PDF с помощью PDFBox
-//        String fileNameInput = fileName;
-        String fileNameOutput= "output/" + params.getFileName();
-//        outputFileName = "output/" + params.getFileName();
 
         //Loading an existing document
         File file = new File(fileName);
@@ -85,12 +84,18 @@ public class PDFHandler extends UploadedFileHandler
             y = height - imageHeight - PDFBox.verticalOffset - upDownBorder;   // пересчитываем высоту так, чтобы картинка теперь оказалась наверху
         }
 
-        PDFBox.drawImageOnEndOfDocument(doc, fileNameOutput, singImagePath, x, y, imageWidth, imageHeight);    // рисуем картинку по координатам
+        PDFBox.drawImageOnEndOfDocument(doc, outputFileName, singImagePath, x, y, imageWidth, imageHeight);    // рисуем картинку по координатам
 
         System.out.println(" " + x + " " + y);
 
         doc.close();
+    }
 
-        return params.getFileName();
+    @Override
+    public String processDocument(String fileName) throws PDFHandlerException, IOException, ExcelHandlerException, WordHandlerException, BootstrapException, Exception
+    {
+        String fileNameOutput= "output/" + params.getFileName();    // указываю папку вывода
+        processDocument(fileName, fileNameOutput);  // обрабатываю документ
+        return params.getFileName();    // возвращаю название исходного файла
     }
 }

@@ -2,6 +2,7 @@ package com.webapi.application.handlers;
 
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.uno.Exception;
+import com.webapi.application.handlers.Excel.ExcelHandlerException;
 import com.webapi.application.handlers.PDF.PDFHandlerException;
 import com.webapi.application.handlers.Word.WordHandlerException;
 import com.webapi.application.models.FileConvertParamsModel;
@@ -13,7 +14,9 @@ public abstract class UploadedFileHandler
     protected String singImagePath = null;
     protected FileConvertParamsModel params = null;
 
-    public String processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception { return null; };
+    public String processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception, ExcelHandlerException { return null; };
+
+    public void processDocument(String fileName, String outputFileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception, ExcelHandlerException { };
 
     public String getSingImagePath()
     {

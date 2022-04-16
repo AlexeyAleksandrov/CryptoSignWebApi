@@ -1,9 +1,11 @@
 package com.webapi.application.controllers;
 
+import com.webapi.application.handlers.Excel.ExcelHandler;
 import com.webapi.application.handlers.PDF.PDFHandler;
 import com.webapi.application.handlers.UploadedFileHandler;
 import com.webapi.application.handlers.Word.WordHandler;
 import com.webapi.application.models.FileConvertParamsModel;
+import com.webapi.application.services.libreoffice.DocumentConverter;
 import com.webapi.application.services.signImage.SignImageCreator;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,9 @@ import java.net.URLConnection;
 @Controller
 public class FileUploadController
 {
+    public static final String singImagePath = "temp/sign_image.jpg";   // путь сохранения готового изображения подписи
+    public static final String signImageLogoPath = "logo/mirea_gerb_52_65.png";  // путь к гербу для изображения
+
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String index()
     {
@@ -57,7 +62,13 @@ public class FileUploadController
             default -> convertParams.setInsertType(-1);
         }
 
-        System.out.println("type = " + convertParams.getInsertType());
+        // проверка корректности входных данных
+        if(convertParams.getInsertType() == -1
+                || (convertParams.getInsertType() == 2
+                && !(fileName.endsWith(".docx") || fileName.endsWith(".doc") || fileName.endsWith(".rtf"))))
+        {
+            return "Error! Выбранный тип подписи неподходит для данного типа файлов!";
+        }
 
         // начинаем обработку файла
         if (!file.isEmpty())
@@ -94,9 +105,6 @@ public class FileUploadController
                 stream.write(bytes);
                 stream.close();
 
-                String singImagePath = "temp/sign_image.jpg";   // путь сохранения готового изображения подписи
-                String signImageLogoPath = "logo/mirea_gerb_52_65.png";  // путь к гербу для изображения
-
                 // создаём изображение подписи
                 SignImageCreator signImageCreator = new SignImageCreator(); // создаём генератор изображения подписи
                 signImageCreator.setImageGerbPath(signImageLogoPath);       // указываем путь к гербу
@@ -112,6 +120,10 @@ public class FileUploadController
                 else if (fileName.endsWith(".pdf"))
                 {
                     documentHandler = new PDFHandler();   // создаём обработчик
+                }
+                else if(fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))
+                {
+                    documentHandler = new ExcelHandler();
                 }
                 else
                 {

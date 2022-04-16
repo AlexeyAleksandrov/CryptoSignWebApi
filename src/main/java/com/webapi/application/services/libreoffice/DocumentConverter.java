@@ -181,7 +181,21 @@ public class DocumentConverter
             }
             else if (convertType == ConvertType.EXPORT_TO_PDF)
             {
-                propertyValues[1].Value = "writer_pdf_Export";
+                // если экспорт Word
+                if(inputFile.endsWith(".docx") || inputFile.endsWith(".doc") || inputFile.endsWith(".rtf"))
+                {
+                    propertyValues[1].Value = "writer_pdf_Export";
+                }
+                // если экспорт Excel
+                else if(inputFile.endsWith(".xlsx") || inputFile.endsWith(".xls"))
+                {
+                    propertyValues[1].Value = "calc_pdf_Export";
+                }
+                // иначе - ошибка
+                else
+                {
+                    propertyValues[1].Value = null;
+                }
                 xStorable.storeToURL(sOutUrl, propertyValues);
             }
 
@@ -214,7 +228,7 @@ public class DocumentConverter
         try
         {
             DocumentConverter documentConverter = new DocumentConverter();  // создаём конвертер документов
-
+;
             documentConverter.convertTo(
                     "C:\\Users\\ASUS\\Downloads\\docs_conv\\титульники.rtf",
                     "C:\\Users\\ASUS\\Downloads\\docs_conv\\titilnik.docx",
