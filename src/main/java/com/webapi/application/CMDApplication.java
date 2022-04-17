@@ -12,11 +12,19 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 public class CMDApplication
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws URISyntaxException
     {
+        System.out.println("Кол-во: " + args.length);
+        for (int i = 0; i< args.length; i++)
+        {
+            System.out.println(args[i]);
+        }
 //        args = new String[9];
 //        args[0] = "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike.docx";
 //        args[1] = "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike_cmd.pdf";
@@ -47,8 +55,19 @@ public class CMDApplication
         String insertType = args[8];
 
         String fileInputOriginalName = fileInput.getName();
-        String currentDir = System.getProperty("user.dir");
-        String fileName = currentDir + "/uploadedfiles/" + fileInputOriginalName;   // получаем оригинальное название файла, который был загружен
+//        String currentDir = System.getProperty("user.dir");
+//        String currentDir = Paths.get("").toAbsolutePath().toString();
+//        String currentDir = new File(CMDApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+//        String fileName = currentDir + "/uploadedfiles/" + fileInputOriginalName;   // получаем оригинальное название файла, который был загружен
+//        String currentDir = new File("").getAbsolutePath();
+        String currentDir = getCurrentPath();
+        System.out.println("current = " + currentDir);
+
+        File outputDir = new File(currentDir + "output/");   // папка вывода
+        File uploadDir = new File(currentDir + "uploadedfiles/");    // папка сохранения
+        File tempDir = new File(currentDir + "temp/");   // папка для временных данных
+
+        String fileName = uploadDir.getAbsolutePath() + File.separator + fileInputOriginalName;   // получаем оригинальное название файла, который был загружен
         FileConvertParamsModel convertParams = new FileConvertParamsModel();    // модель получаемых данных, для удобства
 
         // заносим полученные параметры в модель данных
@@ -103,10 +122,6 @@ public class CMDApplication
                 boolean outputDirCreated = true;
                 boolean tempDirCreated = true;
 
-                File outputDir = new File("output/");   // папка вывода
-                File uploadDir = new File("uploadedfiles/");    // папка сохранения
-                File tempDir = new File("temp/");   // папка для временных данных
-
                 if(!uploadDir.exists())
                 {
                     uploadDirCreated = uploadDir.mkdir();
@@ -140,8 +155,8 @@ public class CMDApplication
 
                 // создаём изображение подписи
                 SignImageCreator signImageCreator = new SignImageCreator(); // создаём генератор изображения подписи
-                signImageCreator.setImageGerbPath(FileUploadController.signImageLogoPath);       // указываем путь к гербу
-                signImageCreator.createSignImage(FileUploadController.singImagePath, convertParams); // создаём изображение подписи
+                signImageCreator.setImageGerbPath(currentDir + FileUploadController.signImageLogoPath);       // указываем путь к гербу
+                signImageCreator.createSignImage(currentDir + FileUploadController.singImagePath, convertParams); // создаём изображение подписи
 
                 UploadedFileHandler documentHandler = null; // обработчик документов
                 String outputFileName = null;
@@ -165,12 +180,12 @@ public class CMDApplication
                 }
 
                 // обрабатываем полученный файл
-                documentHandler.setSingImagePath(FileUploadController.singImagePath); // указываем путь к картинке, которую нужно будет вставить
+                documentHandler.setSingImagePath(currentDir + FileUploadController.singImagePath); // указываем путь к картинке, которую нужно будет вставить
                 documentHandler.setParams(convertParams);    // указываем параметры обработки
                 outputFileName = documentHandler.processDocument(fileName);   // запускаем обработку
 
                 // считываем конечный файл
-                File outputFile = new File("output/" + outputFileName);
+                File outputFile = new File(currentDir + "output/" + outputFileName);
                 int outputFileSize = (int) outputFile.length();
                 byte[] outputFileData = new byte[outputFileSize];
                 FileInputStream outFileInputStream = new FileInputStream(outputFile);
@@ -214,5 +229,24 @@ public class CMDApplication
             System.out.println("Error! Не удалось загрузить файл, потому что он пустой.");
             System.exit(1);
         }
+    }
+
+    public static String getCurrentPath() throws URISyntaxException
+    {
+        //        File jarDir = new File(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(".")).toURI());
+        String jarPath = CMDApplication.class
+                .getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .toURI()
+                .getPath();
+        //        System.out.println("jarDir = " + jarPath.replace("application.jar", ""));
+        jarPath = jarPath.replace("\\", "/");
+        int lastIndex = jarPath.lastIndexOf("/");
+        StringBuilder sb = new StringBuilder(jarPath);
+        jarPath = sb.substring(1, lastIndex+1);
+//        System.out.println("jarDir = " + jarPath);
+
+        return jarPath;
     }
 }
