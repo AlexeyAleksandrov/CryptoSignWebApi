@@ -105,10 +105,9 @@ public class CMDApplication
 
         // проверка корректности входных данных
         if(convertParams.getInsertType() == -1
-                || (convertParams.getInsertType() == 2
-                && !(fileName.endsWith(".docx") || fileName.endsWith(".doc") || fileName.endsWith(".rtf"))))
+                || (convertParams.getInsertType() == 2 && !(fileName.endsWith(".docx") || fileName.endsWith(".doc") || fileName.endsWith(".rtf"))))
         {
-            System.out.println("Error! Выбранный тип подписи неподходит для данного типа файлов!");
+            System.out.println("Error! Выбранный тип подписи не подходит для данного типа файлов! Тип: " + convertParams.getInsertType());
             System.exit(1);
         }
 
@@ -180,6 +179,7 @@ public class CMDApplication
                 }
 
                 // обрабатываем полученный файл
+                documentHandler.setCurrentDir(currentDir);  // задаём корневую папку
                 documentHandler.setSingImagePath(currentDir + FileUploadController.singImagePath); // указываем путь к картинке, которую нужно будет вставить
                 documentHandler.setParams(convertParams);    // указываем параметры обработки
                 outputFileName = documentHandler.processDocument(fileName);   // запускаем обработку
@@ -221,6 +221,7 @@ public class CMDApplication
             {
                 e.printStackTrace();
                 System.out.println("Error! Не удалось загрузить " + fileName + " => " + e.getMessage());
+                e.printStackTrace();
                 System.exit(1);
             }
         }

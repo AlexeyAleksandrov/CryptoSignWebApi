@@ -13,6 +13,7 @@ public abstract class UploadedFileHandler
 {
     protected String singImagePath = null;
     protected FileConvertParamsModel params = null;
+    protected String currentDir = "";
 
     public String processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception, ExcelHandlerException { return null; };
 
@@ -38,4 +39,8 @@ public abstract class UploadedFileHandler
         this.params = params;
     }
 
+    public void setCurrentDir(String currentDir)
+    {
+        this.currentDir = currentDir;
+    }
 }

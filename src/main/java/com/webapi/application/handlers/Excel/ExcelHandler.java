@@ -13,6 +13,11 @@ import java.io.IOException;
 
 public class ExcelHandler  extends UploadedFileHandler
 {
+    public ExcelHandler()
+    {
+        singImagePath = FileUploadController.singImagePath;  // путь к картинке, которую надо вставить
+    }
+
     @Override
     public String processDocument(String fileName) throws PDFHandlerException, IOException, WordHandlerException, BootstrapException, Exception, ExcelHandlerException
     {
@@ -31,7 +36,7 @@ public class ExcelHandler  extends UploadedFileHandler
 
         // обрабатываем документ как PDF
         PDFHandler pdfHandler = new PDFHandler();   // обработчик PDF
-        pdfHandler.setSingImagePath(FileUploadController.singImagePath);
+        pdfHandler.setSingImagePath(singImagePath);
         pdfHandler.processDocument(outputPdfFileName, outputFileName);
 
         outputFileName = params.getFileName()
@@ -39,4 +44,5 @@ public class ExcelHandler  extends UploadedFileHandler
                 .replace(".xls", ".pdf");
         return outputFileName;
     }
+
 }
