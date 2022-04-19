@@ -7,6 +7,7 @@ import com.webapi.application.handlers.UploadedFileHandler;
 import com.webapi.application.handlers.Word.WordHandler;
 import com.webapi.application.models.FileConvertParamsModel;
 import com.webapi.application.services.signImage.SignImageCreator;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -138,6 +139,10 @@ public class CMDApplication
                 if(!uploadDirCreated || !outputDirCreated || !tempDirCreated)
                 {
                     System.out.println("Не удалось загрузить файл, т.к. файловая система не позволяет выполнить сохранение!");
+                    System.out.println("uploaded = " + uploadDir.getAbsolutePath());
+                    System.out.println("output = " + outputDir.getAbsolutePath());
+                    System.out.println("temp = " + tempDir.getAbsolutePath());
+
                     System.exit(1);
                 }
 
@@ -234,20 +239,26 @@ public class CMDApplication
 
     public static String getCurrentPath() throws URISyntaxException
     {
-        //        File jarDir = new File(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(".")).toURI());
-        String jarPath = CMDApplication.class
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .toURI()
-                .getPath();
-        //        System.out.println("jarDir = " + jarPath.replace("application.jar", ""));
-        jarPath = jarPath.replace("\\", "/");
-        int lastIndex = jarPath.lastIndexOf("/");
-        StringBuilder sb = new StringBuilder(jarPath);
-        jarPath = sb.substring(1, lastIndex+1);
-//        System.out.println("jarDir = " + jarPath);
-
-        return jarPath;
+//        //        File jarDir = new File(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(".")).toURI());
+//        String jarPath = CMDApplication.class
+//                .getProtectionDomain()
+//                .getCodeSource()
+//                .getLocation()
+//                .toURI()
+//                .getPath();
+//        //        System.out.println("jarDir = " + jarPath.replace("application.jar", ""));
+//        jarPath = jarPath.replace("\\", "/");
+//        int lastIndex = jarPath.lastIndexOf("/");
+//        StringBuilder sb = new StringBuilder(jarPath);
+//        int startIndex = 1;
+//        if(SystemUtils.IS_OS_LINUX)
+//        {
+//            startIndex = 0;
+//        }
+//        jarPath = sb.substring(startIndex, lastIndex+1);
+////        System.out.println("jarDir = " + jarPath);
+//
+//        return jarPath;
+        return "";
     }
 }
