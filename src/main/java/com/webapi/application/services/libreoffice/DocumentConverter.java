@@ -92,6 +92,7 @@ public class DocumentConverter
     private void configure() throws Exception, BootstrapException
     {
         // get the remote office component context
+        System.out.println("Search LibreOffice on " + oooExeFolder);
         XComponentContext xContext = BootstrapSocketConnector.bootstrap(oooExeFolder);
         System.out.println("Connected to a running office ...");
 

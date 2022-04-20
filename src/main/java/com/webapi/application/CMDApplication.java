@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class CMDApplication
@@ -226,6 +227,7 @@ public class CMDApplication
             {
                 e.printStackTrace();
                 System.out.println("Error! Не удалось загрузить " + fileName + " => " + e.getMessage());
+                System.out.println(Arrays.toString(e.getStackTrace()));
                 e.printStackTrace();
                 System.exit(1);
             }
