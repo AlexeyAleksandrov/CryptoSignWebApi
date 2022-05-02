@@ -33,7 +33,7 @@ public class SignImageCreator
     private static final int indent = 20;    // отступ по X от левого края рамки
     private static final int fontSizeBig = 17;   // размер шрифта для заголовков
     private static final int fontSizeSmall = 13; // размер шрифта для текста
-    private static final String fontName = "Segoe UI";   // шрифт, которым будет написан текст
+    private static final String fontName = "Ubuntu";   // шрифт, которым будет написан текст
 
     // интервал между центрами строк текста
     private static final int interval = (height - (topMargin + bottomMargin)) / 5;    // шаг между строками, высота минус отступы, и делим на кол-во строк, которые нужно нарисовать
