@@ -3,11 +3,12 @@ package com.webapi.application;
 import com.webapi.application.services.libreoffice.DocumentConverter;
 import com.webapi.application.services.signImage.SignImageCreator;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class MainDemo
 {
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws IOException, FontFormatException
     {
 //        String outputImagePath = "C:\\Users\\ASUS\\Downloads\\image_java.jpg";   // путь сохранения файла картинки
 //        String imageGerbPath = "C:\\Users\\ASUS\\Pictures\\mirea_gerb_52_65.png";    // путь к изображению герба
