@@ -1,6 +1,7 @@
 package com.webapi.application.services.signImage;
 
 import com.webapi.application.models.FileConvertParamsModel;
+import org.apache.el.stream.Stream;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,6 +11,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class SignImageCreator
 {
@@ -33,7 +36,7 @@ public class SignImageCreator
     private static final int indent = 20;    // отступ по X от левого края рамки
     private static final int fontSizeBig = 17;   // размер шрифта для заголовков
     private static final int fontSizeSmall = 13; // размер шрифта для текста
-    private static final String fontName = "Segoe UI";   // шрифт, которым будет написан текст
+    private static final String[] fontNames = {"Segoe UI", "Carlito", "PT Astra Fact", "PT Root UI", "PT Astra Sans", "PT Serif", "Calibri", "Ubuntu"};   // шрифт, которым будет написан текст "Segoe UI", "Ubuntu"
 
     // интервал между центрами строк текста
     private static final int interval = (height - (topMargin + bottomMargin)) / 5;    // шаг между строками, высота минус отступы, и делим на кол-во строк, которые нужно нарисовать
@@ -60,7 +63,7 @@ public class SignImageCreator
      * @param drawGerb включает и выключает отрисовку герба. Для работы нужно указать путь к файлу герба через {@link SignImageCreator#setImageGerbPath}
      * @throws IOException исключения, при ошибках чтения и записи файлов картинки или герба
      */
-    public void createSignImage(String filePath, String owner, String certificate, String validFrom, String validTo, boolean drawGerb) throws IOException
+    public void createSignImage(String filePath, String owner, String certificate, String validFrom, String validTo, boolean drawGerb) throws IOException, FontFormatException
     {
         FileConvertParamsModel convertParams = new FileConvertParamsModel();
         convertParams.setSignOwner(owner);
@@ -78,7 +81,7 @@ public class SignImageCreator
      * @param convertParams параметры изображения - сертификат, владелец и т.д.
      * @throws IOException исключения, при ошибках чтения и записи файлов картинки или герба
      */
-    public void createSignImage(String filePath, FileConvertParamsModel convertParams) throws IOException
+    public void createSignImage(String filePath, FileConvertParamsModel convertParams) throws IOException, FontFormatException
     {
         String owner = convertParams.getSignOwner();
         String certificate = convertParams.getSignCertificate();
@@ -121,8 +124,24 @@ public class SignImageCreator
     }
 
     // функция рисования текста на изображении
-    public void drawText(Graphics2D graphics, int position_X, int position_Y, String text, int fontType, int fontSize, boolean drawInCenter)
+    public void drawText(Graphics2D graphics, int position_X, int position_Y, String text, int fontType, int fontSize, boolean drawInCenter) throws FontFormatException
     {
+        String fontName = null;
+        for (int i = 0; i < fontNames.length; i++)
+        {
+            if(isFontFound(fontNames[i]))
+            {
+                fontName = fontNames[i];
+                System.out.println("Using font: " + fontName);
+                break;
+            }
+        }
+
+        if(fontName == null)
+        {
+            throw new FontFormatException("В системе должен быть установлен хотя бы один необходимый шрифт: " + Arrays.toString(fontNames));
+        }
+
         Font font = new Font(fontName, fontType, fontSize); // шрифт текста
         graphics.setFont(font); // задаем шрифт рисовальщику
 
@@ -142,5 +161,20 @@ public class SignImageCreator
 
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);  // устанавливаем флаги для сглаживания
         graphics.drawString(text, text_x, text_y);  // рисуем надпись
+    }
+
+    public boolean isFontFound(String fontName)
+    {
+        GraphicsEnvironment g= null;
+        g=GraphicsEnvironment.getLocalGraphicsEnvironment();
+        String []fonts=g.getAvailableFontFamilyNames();
+        for (int i = 0; i < fonts.length; i++)
+        {
+            if (fonts[i].equals(fontName))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
