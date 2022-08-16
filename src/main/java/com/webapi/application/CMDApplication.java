@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class CMDApplication
@@ -27,6 +28,7 @@ public class CMDApplication
         {
             System.out.println(args[i]);
         }
+
 //        args = new String[9];
 //        args[0] = "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike.docx";
 //        args[1] = "C:\\Users\\ASUS\\Downloads\\Otchyot_po_praktike_cmd.pdf";
@@ -44,6 +46,13 @@ public class CMDApplication
         {
             System.out.println("Недостаточно параметров!");
             System.exit(1);
+        }
+
+        if(args[0].endsWith(".jar"))
+        {
+            List<String> arguments = new java.util.ArrayList<>(List.of(args));
+            arguments.remove(0);
+            arguments.toArray(args);
         }
 
         File fileInput = new File(args[0]);
@@ -81,6 +90,7 @@ public class CMDApplication
         convertParams.setDrawLogo(drawLogo);
         convertParams.setCheckTransitionToNewPage(checkTransitionToNewPage);
 
+        System.out.println("insertType = " + insertType);
         switch (insertType)
         {
             case "В конец документа":

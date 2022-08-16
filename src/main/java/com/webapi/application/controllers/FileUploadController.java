@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLConnection;
 
+@RequestMapping
 @Controller
 public class FileUploadController
 {
@@ -26,6 +27,12 @@ public class FileUploadController
     public String index()
     {
         return "index.html";
+    }
+
+    @RequestMapping(value ="/plugin", method = RequestMethod.GET)
+    public String plugin()
+    {
+        return "cryptoproblugin.html";
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.GET)
